@@ -1,6 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
+import Feed from './Feed.jsx';
+import Sources from './Sources.jsx';
+import '../public/main.css';
 
 class App extends React.Component {
   constructor(props) {
@@ -17,25 +20,27 @@ class App extends React.Component {
 
   requestFeed() {
     axios.get('/list')
-    .then((response) => {
-      this.setState({ data: response.data.channel.items })
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+      .then((response) => {
+        this.setState({ data: response.data.channel.items })
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
 
   render() {
-    const list = this.state.data.map((item, index) =>
-    <li key={index}>
-      {item.title}
-      <br></br>
-      {item.link}
-    </li>
-    )
     return (
       <div>
-        {list}
+        <div>
+          <h1>Hello, User</h1>
+        </div>
+        <div className="main">
+          <Sources className="sourcesContainer" />
+          <Feed data={this.state.data} className="feedContainer" />
+        </div>
+        <div>
+          <h3 style={{ textAlign: "center" }}>ABOUT</h3>
+        </div>
       </div>
     )
   }

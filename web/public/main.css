@@ -1,0 +1,34 @@
+.main {
+  width: 100%;
+  height: 100%;
+  display: -webkit-flex;
+  display: flex;
+}
+
+.sourcesContainer {
+  -webkit-box-flex: 1;
+  flex: 1;
+}
+
+.sources {
+  border-style: solid;
+  border-left: 0px;
+  border-top: 0px;
+  border-bottom: 0px;
+  border-color: gainsboro;
+  margin-right: 10px
+}
+
+.feedContainer {
+  padding-left: 15px;
+  color: black;
+  text-decoration: none;
+  -webkit-box-flex: 1;
+  flex: 1;
+}
+
+.title {
+  height: 25px;
+  padding-bottom: 10px;
+  color: black;
+}

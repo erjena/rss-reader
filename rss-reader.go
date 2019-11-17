@@ -32,13 +32,14 @@ type Item struct {
 	Description string `xml:"description" json:"description"`
 }
 
-func getHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
+func getHandler(res http.ResponseWriter, req *http.Request) {
+	res.WriteHeader(http.StatusOK)
 	var rss = getRss()
-	err := json.NewEncoder(w).Encode(rss)
+	var jsonEncoder = json.NewEncoder(res)
+	err := jsonEncoder.Encode(rss)
 	if err != nil {
 		log.Fatalf("Was not able to encode %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		res.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 }
