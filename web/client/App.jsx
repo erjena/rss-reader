@@ -5,7 +5,9 @@ import axios from 'axios';
 class App extends React.Component {
   constructor(props) {
     super(props)
-
+    this.state = {
+      data: []
+    }
     this.requestFeed = this.requestFeed.bind(this);
   }
 
@@ -16,7 +18,7 @@ class App extends React.Component {
   requestFeed() {
     axios.get('/list')
     .then((response) => {
-      console.log(response.data)
+      this.setState({ data: response.data.channel.items })
     })
     .catch((error) => {
       console.log(error)
@@ -24,9 +26,16 @@ class App extends React.Component {
   }
 
   render() {
+    const list = this.state.data.map((item, index) =>
+    <li key={index}>
+      {item.title}
+      <br></br>
+      {item.link}
+    </li>
+    )
     return (
       <div>
-        <p>Hello</p>
+        {list}
       </div>
     )
   }

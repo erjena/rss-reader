@@ -22,7 +22,7 @@ type Rss struct {
 type Channel struct {
 	Title string `xml:"title" json:"title"`
 	Link  string `xml:"link" json:"link"`
-	Item  []Item `xml:"item" json:"item"`
+	Items []Item `xml:"item" json:"items"`
 }
 
 // Item struct for each item in Channel
