@@ -33,15 +33,15 @@ type Item struct {
 }
 
 func getHandler(res http.ResponseWriter, req *http.Request) {
-	res.WriteHeader(http.StatusOK)
 	var rss = getRss()
-	var jsonEncoder = json.NewEncoder(res)
-	err := jsonEncoder.Encode(rss)
+	data, err := json.Marshal(rss)
 	if err != nil {
-		log.Fatalf("Was not able to encode %v", err)
+		log.Fatalf("Was not able to stringify %v", err)
 		res.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	res.WriteHeader(http.StatusOK)
+	res.Write(data)
 }
 
 func getRss() Rss {
