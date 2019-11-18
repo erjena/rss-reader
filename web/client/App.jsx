@@ -22,6 +22,7 @@ class App extends React.Component {
     axios.get('/list')
       .then((response) => {
         this.setState({ data: response.data.channel.items })
+        //console.log(response.data)
       })
       .catch((error) => {
         console.log(error)
@@ -30,13 +31,13 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="page">
         <div>
-          <h1>Hello, User</h1>
+          <h1 className="header">Hello, User</h1>
         </div>
         <div className="main">
           <Sources className="sourcesContainer" />
-          <Feed data={this.state.data} className="feedContainer" />
+          <Feed data={this.state.data} />
         </div>
         <div>
           <h3 style={{ textAlign: "center" }}>ABOUT</h3>

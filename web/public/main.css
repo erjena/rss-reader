@@ -1,8 +1,20 @@
+body {
+  background-color: #E9EFF7;
+  color: #2C6975;
+}
+
+.header {
+  margin-top: 0%;
+  margin-bottom: 20px;
+}
+
+
 .main {
   width: 100%;
   height: 100%;
   display: -webkit-flex;
   display: flex;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 .sourcesContainer {
@@ -11,24 +23,44 @@
 }
 
 .sources {
-  border-style: solid;
   border-left: 0px;
   border-top: 0px;
   border-bottom: 0px;
-  border-color: gainsboro;
-  margin-right: 10px
+  margin-right: 10px;
 }
 
 .feedContainer {
+  width: 100%;
   padding-left: 15px;
-  color: black;
   text-decoration: none;
   -webkit-box-flex: 1;
   flex: 1;
 }
 
-.title {
-  height: 25px;
-  padding-bottom: 10px;
-  color: black;
+a {
+  color: #2C6975;
+  text-decoration: none;
+}
+
+.feedElement {
+  padding: 7px;
+  border-radius: 7px;
+  margin-bottom: 20px;
+  font-size: 18px;
+  background-color: white;
+}
+
+.feedElement:hover {
+  background-color: rgba(44, 105, 117, 0.644);
+}
+
+.description {
+  font-size: 14px;
+  display: block;
+}
+
+.pubDate {
+  font-size: 14px;
+  position: absolute;
+  left: 90%;
 }

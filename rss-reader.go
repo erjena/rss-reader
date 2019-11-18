@@ -30,6 +30,7 @@ type Item struct {
 	Title       string `xml:"title" json:"title"`
 	Link        string `xml:"link" json:"link"`
 	Description string `xml:"description" json:"description"`
+	PubDate     string `xml:"pubDate" json:"pubDate"`
 }
 
 func getHandler(res http.ResponseWriter, req *http.Request) {
