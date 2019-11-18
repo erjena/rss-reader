@@ -9,7 +9,7 @@ export default class Feed extends React.Component {
   render() {
     const list = this.props.data.map((item, index) =>
       <a href={item.link} key={index}>
-        <div className="feedElement">
+        <div className="feedElement" >
           <div>
             <span className="title">
               {(item.title).replace(/<\/?[^>]+(>|$)/g, "")}

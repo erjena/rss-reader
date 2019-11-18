@@ -1,7 +1,5 @@
 body {
   margin: 0%;
-  background-color: #E9EFF7;
-  color: #2aa198;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
@@ -10,7 +8,7 @@ body {
   width: 20%;
   height: 100vh;
   overflow: scroll;
-  background-color: #073642;
+  background-color: #363538;
 }
 
 .rightColumn {
@@ -18,6 +16,7 @@ body {
   width: 80%;
   height: 100vh;
   overflow: scroll;
+  background-color: #F6F6F6;
 }
 
 .userName {
@@ -25,39 +24,38 @@ body {
   margin: 0%;
   padding-left: 15px;
   padding-bottom: 25px;
+  color: #408697;
 }
 
 .sourceItem {
   width: 100%;
-  background-color: #859900;
+  background-color: #8D8C8A;
   padding-top: 5px;
   padding-bottom: 5px;
   font-size: 16px;
-  color: #d33682;
+  color: #52D6F4;
 }
 
 a {
-  color: #2C6975;
+  color: #408697;
   text-decoration: none;
 }
 
 .feed {
-  background-color: #fdf6e3;
   padding-left: 10px;
   padding-right: 15px;
   padding-top: 25px;
 }
 
 .feedElement {
-  border: 1px solid #eee8d5;
+  border-bottom: 1px solid #363538;
   padding: 7px;
   border-radius: 5px;
-  margin-bottom: 10px;
-  background-color: white;
+  margin-bottom: 5px;
 }
 
 .feedElement:hover {
-  background-color: #d33682bb;
+  background-color: #8D8C8Abb;
 }
 
 .title {
@@ -68,11 +66,12 @@ a {
 .pubDate {
   float: right;
   font-size: 11px;
-  color: #cb4b16;
+  color: #52D6F4;
 }
 
 .description {
   font-size: 14px;
   display: block;
   padding-top: 7px;
+  color: #52D6F4;
 }
