@@ -8,13 +8,20 @@ export default class Feed extends React.Component {
 
   render() {
     const list = this.props.data.map((item, index) =>
-    <div key={index} className="feedElement">
-      <span><a href={item.link}>
-        {(item.title).replace(/<\/?[^>]+(>|$)/g, "")}
-      </a></span>
-      <span className="pubDate">{item.pubDate.slice(0, 17)}</span>
-      <span className="description">{(item.description).replace(/<\/?[^>]+(>|$)/g, "")}</span>
-    </div>
+      <div key={index} className="feedElement">
+        <div>
+          <span className="title">
+            <a href={item.link}>
+              {(item.title).replace(/<\/?[^>]+(>|$)/g, "")}
+            </a>
+          </span>
+          <span className="pubDate">
+            {item.pubDate.slice(0, 17)}
+          </span>
+          <div style={{ clear: "both" }}></div>
+        </div>
+        <span className="description">{(item.description).replace(/<\/?[^>]+(>|$)/g, "")}</span>
+      </div>
     )
     return (
       <div className="feed">

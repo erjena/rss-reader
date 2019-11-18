@@ -37,7 +37,6 @@ a {
   padding: 7px;
   border-radius: 7px;
   margin-bottom: 10px;
-  font-size: 18px;
   background-color: white;
 }
 
@@ -45,14 +44,18 @@ a {
   background-color: rgba(44, 105, 117, 0.644);
 }
 
+.title {
+  float: left;
+  font-size: 18px;
+}
+
+.pubDate {
+  float: right;
+  font-size: 11px;
+}
+
 .description {
   font-size: 14px;
   display: block;
   padding-top: 7px;
-}
-
-.pubDate {
-  font-size: 10px;
-  position: relative;
-  padding-left: 25px;
 }
