@@ -31,16 +31,13 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className="page">
-        <div>
-          <h1 className="header">Hello, User</h1>
+      <div className="main">
+        <div className="leftColumn">
+          <h2 className="userName">HappyUser</h2>
+          <Sources />
         </div>
-        <div className="main">
-          <Sources className="sourcesContainer" />
+        <div className="rightColumn">
           <Feed data={this.state.data} />
-        </div>
-        <div>
-          <h3 style={{ textAlign: "center" }}>ABOUT</h3>
         </div>
       </div>
     )

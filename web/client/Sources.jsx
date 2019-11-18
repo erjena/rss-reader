@@ -9,7 +9,7 @@ export default class Sources extends React.Component {
   render() {
     return (
       <div className="sources">
-        <span style={{ paddingRight: "100px" }}>All</span>
+        <span>All</span>
       </div>
     )
   }
