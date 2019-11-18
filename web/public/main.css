@@ -8,7 +8,7 @@ body {
   width: 20%;
   height: 100vh;
   overflow: scroll;
-  background-color: #363538;
+  background-color: #E2F0F9;
 }
 
 .rightColumn {
@@ -16,7 +16,7 @@ body {
   width: 80%;
   height: 100vh;
   overflow: scroll;
-  background-color: #F6F6F6;
+  background-color: #ffffff;
 }
 
 .userName {
@@ -24,20 +24,20 @@ body {
   margin: 0%;
   padding-left: 15px;
   padding-bottom: 25px;
-  color: #408697;
+  color: #286FB4;
 }
 
 .sourceItem {
   width: 100%;
-  background-color: #8D8C8A;
+  background-color: #B0DDE4bb;
   padding-top: 5px;
   padding-bottom: 5px;
   font-size: 16px;
-  color: #52D6F4;
+  color: #DF4C73;
 }
 
 a {
-  color: #408697;
+  color: #286FB4;
   text-decoration: none;
 }
 
@@ -48,14 +48,14 @@ a {
 }
 
 .feedElement {
-  border-bottom: 1px solid #363538;
+  border-bottom: 1px solid #DF4C73;
   padding: 7px;
   border-radius: 5px;
   margin-bottom: 5px;
 }
 
 .feedElement:hover {
-  background-color: #8D8C8Abb;
+  background-color: #B0DDE4bb;
 }
 
 .title {
@@ -66,12 +66,12 @@ a {
 .pubDate {
   float: right;
   font-size: 11px;
-  color: #52D6F4;
+  color: #286FB4;
 }
 
 .description {
   font-size: 14px;
   display: block;
   padding-top: 7px;
-  color: #52D6F4;
+  color: #286FB4;
 }
