@@ -33,7 +33,7 @@ class App extends React.Component {
     return (
       <div className="main">
         <div className="leftColumn">
-          <h2 className="userName">HappyUser</h2>
+          <h2 className="userName">Happy Reader</h2>
           <Sources />
         </div>
         <div className="rightColumn">

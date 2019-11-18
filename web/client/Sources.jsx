@@ -8,8 +8,10 @@ export default class Sources extends React.Component {
 
   render() {
     return (
-      <div className="sources">
-        <span>All</span>
+      <div>
+        <div className="sourceItem">
+        <span style={{paddingLeft: "15px" }}>All</span>
+        </div>
       </div>
     )
   }
