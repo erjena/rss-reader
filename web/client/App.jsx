@@ -38,7 +38,6 @@ class App extends React.Component {
     axios.get('/list')
       .then((response) => {
         this.setState({ data: response.data.channel.items })
-        //console.log(response.data)
       })
       .catch((error) => {
         console.log(error)
@@ -51,7 +50,7 @@ class App extends React.Component {
         <div className="leftColumn">
           <h2 className="userName">Happy Reader</h2>
           <Sources />
-          <AddSource onSubmit={this.submitSource}/>
+          <AddSource onSubmit={this.submitSource} />
         </div>
         <div className="rightColumn">
           <Feed data={this.state.data} />

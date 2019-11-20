@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -82,6 +83,26 @@ func insertSource(db *sql.DB, username string, source string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func getAllSources(db *sql.DB) {
+	rows, err := db.Query("SELECT DISTINCT link FROM sources")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	var link string
+	var sources []string
+	for rows.Next() {
+		err := rows.Scan(&link)
+		if err != nil {
+			log.Fatal(err)
+		}
+		sources = append(sources, link)
+	}
+
+	fmt.Printf("array %v", sources)
 }
 
 // func insertItems(db *sql.DB) {

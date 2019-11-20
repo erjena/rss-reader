@@ -4,6 +4,7 @@ var fileName string
 
 func main() {
 	var db = dbConnection()
+	getAllSources(db)
 	setupServer(db)
 
 	// fileName = "https://www.elle.com/rss/all.xml/"
