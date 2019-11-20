@@ -4,10 +4,10 @@ import (
 	"database/sql"
 	"encoding/json"
 	"encoding/xml"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -85,36 +85,52 @@ func insertSource(db *sql.DB, username string, source string) {
 	}
 }
 
-func getAllSources(db *sql.DB) {
-	rows, err := db.Query("SELECT DISTINCT link FROM sources")
+func getAllSources(db *sql.DB) []*Source {
+	rows, err := db.Query("SELECT id, link FROM sources")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
 
-	var link string
-	var sources []string
+	var sources []*Source
 	for rows.Next() {
-		err := rows.Scan(&link)
+		var source Source
+		err := rows.Scan(&source.ID, &source.Link)
 		if err != nil {
 			log.Fatal(err)
 		}
-		sources = append(sources, link)
+		sources = append(sources, &source)
 	}
 
-	fmt.Printf("array %v", sources)
+	for _, item := range sources {
+		time, err := db.Query("SELECT max(pubDate) FROM items WHERE source_id=?", item.ID)
+		if err != nil {
+			log.Print(err)
+		}
+		if time.Next() == false {
+			log.Println("Publication date was not found")
+		}
+		err = time.Scan(&item.LastPubDate)
+		if err != nil {
+			log.Print(err)
+		}
+	}
+
+	return sources
 }
 
-// func insertItems(db *sql.DB) {
-// 	var rss = getRss("abc@gmail.com")
-// 	insertStatment, err := db.Prepare("INSERT INTO items (source_id, title, link, description, pubDate) VALUES (?, ?, ?, ?, ?)")
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	defer insertStatment.Close()
+func insertItems(db *sql.DB, sourceID int, items []Item) {
+	insertStatment, err := db.Prepare("INSERT INTO items (source_id, title, link, description, pubDate) VALUES (?, ?, ?, ?, ?)")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer insertStatment.Close()
 
-// 	_, err = insertStatment.Exec(2, rss.Channel.Items[0].Title, rss.Channel.Items[0].Link, rss.Channel.Items[0].Description, rss.Channel.Items[0].PubDate)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// }
+	for _, item := range items {
+		pubdate, _ := time.Parse(time.RFC1123Z, item.PubDate)
+		_, err = insertStatment.Exec(sourceID, item.Title, item.Link, item.Description, pubdate)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+}

@@ -1,5 +1,7 @@
 package main
 
+import "time"
+
 // Rss - main struct
 type Rss struct {
 	Channel Channel `xml:"channel" json:"channel"`
@@ -18,4 +20,11 @@ type Item struct {
 	Link        string `xml:"link" json:"link"`
 	Description string `xml:"description" json:"description"`
 	PubDate     string `xml:"pubDate" json:"pubDate"`
+}
+
+// Source stores source info
+type Source struct {
+	ID          int
+	Link        string
+	LastPubDate *time.Time
 }
