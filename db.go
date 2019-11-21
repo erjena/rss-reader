@@ -49,7 +49,7 @@ func dbConnection() *sql.DB {
 		log.Fatalf("Was not able to parse %v", err)
 	}
 
-	db, err := sql.Open("mysql", configuration.User+":"+configuration.Password+"@/rss_reader")
+	db, err := sql.Open("mysql", configuration.User+":"+configuration.Password+"@/rss_reader?parseTime=true")
 	if err != nil {
 		log.Fatalf("Was not able to connect to db %v", err)
 	}
@@ -133,4 +133,53 @@ func insertItems(db *sql.DB, sourceID int, items []Item) {
 			log.Fatal(err)
 		}
 	}
+}
+
+func getUserSources(db *sql.DB, userID int) []ResponseToClient {
+	rows, err := db.Query("SELECT id, link FROM sources WHERE user_id=?", userID)
+	if err != nil {
+		log.Println(err)
+	}
+	defer rows.Close()
+
+	type SourceInfo struct {
+		ID   int
+		Link string
+	}
+	var sourcesInfos []*SourceInfo
+	for rows.Next() {
+		var sourceInfo SourceInfo
+		err := rows.Scan(&sourceInfo.ID, &sourceInfo.Link)
+		if err != nil {
+			log.Print(err)
+		}
+		sourcesInfos = append(sourcesInfos, &sourceInfo)
+	}
+	// fmt.Printf("sources %v %v", sourcesInfos[0].ID, sourcesInfos[0].Link)
+
+	var response []ResponseToClient
+
+	for _, source := range sourcesInfos {
+		info, err := db.Query("SELECT title, link, description, pubDate FROM items WHERE source_id=?", source.ID)
+		if err != nil {
+			log.Println(err)
+		}
+		defer info.Close()
+
+		var items []Item
+		for info.Next() {
+			var item Item
+			var pubDate time.Time
+			err := info.Scan(&item.Title, &item.Link, &item.Description, &pubDate)
+			if err != nil {
+				log.Println(err)
+			}
+			item.PubDate = pubDate.Format(time.RFC1123Z)
+			items = append(items, item)
+		}
+		var sourceResponse = ResponseToClient{SourceID: source.Link, Items: items}
+		response = append(response, sourceResponse)
+	}
+
+	return response
 }

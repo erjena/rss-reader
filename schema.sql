@@ -28,7 +28,7 @@ CREATE TABLE items (
   title           VARCHAR(250) NOT NULL,
   link            VARCHAR(250) NOT NULL,
   description     VARCHAR(400),
-  pubDate         TIME NOT NULL,
+  pubDate         DATETIME NOT NULL,
   PRIMARY KEY(id),
   FOREIGN KEY(source_id) REFERENCES sources(id)
 );

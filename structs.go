@@ -28,3 +28,9 @@ type Source struct {
 	Link        string
 	LastPubDate *time.Time
 }
+
+// ResponseToClient to send response with source name and array of Items
+type ResponseToClient struct {
+	SourceID string `json:"sourceID"`
+	Items    []Item `json:"items"`
+}
