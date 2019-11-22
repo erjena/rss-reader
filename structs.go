@@ -20,6 +20,7 @@ type Item struct {
 	Link        string `xml:"link" json:"link"`
 	Description string `xml:"description" json:"description"`
 	PubDate     string `xml:"pubDate" json:"pubDate"`
+	SourceName  string `json:"sourceName"`
 }
 
 // Source stores source info

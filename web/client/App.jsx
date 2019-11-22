@@ -57,6 +57,7 @@ class App extends React.Component {
     let sources = [];
     for (let i = 0; i < this.state.data.length; i++) {
       sources.push(this.state.data[i].sourceID);
+      
       elements.push(...this.state.data[i].items);
     }
     this.setState({

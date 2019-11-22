@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -169,6 +170,10 @@ func getUserSources(db *sql.DB, userID int) []ResponseToClient {
 		var items []Item
 		for info.Next() {
 			var item Item
+			var temp = source.Link
+			var firstIdx = strings.Index(temp, ".")
+			var lastIdx = strings.Index(temp, ".com")
+			item.SourceName = temp[firstIdx+1 : lastIdx]
 			var pubDate time.Time
 			err := info.Scan(&item.Title, &item.Link, &item.Description, &pubDate)
 			if err != nil {

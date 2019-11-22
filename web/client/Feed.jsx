@@ -15,11 +15,13 @@ export default class Feed extends React.Component {
               {(item.title).replace(/<\/?[^>]+(>|$)/g, "")}
             </span>
             <span className="pubDate">
-              {item.pubDate.slice(0, 17)}
+              {item.pubDate.slice(0, 17) + " | " + item.sourceName.toUpperCase()}
             </span>
             <div style={{ clear: "both" }}></div>
           </div>
-          <span className="description">{(item.description).replace(/<\/?[^>]+(>|$)/g, "")}</span>
+            <span className="description">
+              {(item.description).replace(/<\/?[^>]+(>|$)/g, "")}
+            </span>
         </div>
       </a>
     )
