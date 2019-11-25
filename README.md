@@ -37,6 +37,6 @@ Simply click on a title and happy reading!
 
 ## Further Improvments
 
-1. Create a Goroutine.
+1. Use goroutine to run crawler.
 2. Add support for multiple users.
 3. Allow users to choose between light and dark themes.
