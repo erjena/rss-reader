@@ -14,12 +14,14 @@ export default class Sources extends React.Component {
 
   render() {
     const sources = this.props.sources.map((source, index) => 
-      <div id={index} key={index} className={ source.isChosen ? "sourceItemChosen" : "sourceItem" } onClick={this.onClick}>
+      <div id={index} key={index} className="sourceItem"
+      style={{ backgroundColor: source.isChosen ? "#B0DDE4" : "transparent"}}
+      onClick={this.onClick}>
         {source.name}
       </div>
     )
     return (
-      <div style={{ marginTop: "30px" }}>
+      <div style={{ marginTop: "25px" }}>
         {sources}
       </div>
     )
