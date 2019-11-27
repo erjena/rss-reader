@@ -5,24 +5,23 @@ export default class Sources extends React.Component {
   constructor(props) {
     super(props)
 
+    this.onClick = this.onClick.bind(this);
+  }
 
+  onClick(event) {
+    this.props.onSourceChange(event.target.id);
   }
 
   render() {
-    const sources = this.props.sources.map((source, index) =>
-      <li key={index}>
-        {source.slice(8, source.indexOf('com')+3)}
-      </li>
+    const sources = this.props.sources.map((source, index) => 
+      <div id={index} key={index} className={ source.isChosen ? "sourceItemChosen" : "sourceItem" } onClick={this.onClick}>
+        {source.name}
+      </div>
     )
     return (
-      <div>
-        <div className="sourceItem">
-        <span style={{paddingLeft: "15px" }}>All</span>
-        <ul>{sources}</ul>
-        </div>
+      <div style={{ marginTop: "30px" }}>
+        {sources}
       </div>
     )
   }
 }
-
-// style={{display: "block", paddingLeft: "25px", paddingTop: "15px" }}

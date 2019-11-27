@@ -12,11 +12,14 @@ class App extends React.Component {
     this.state = {
       data: [],
       sources: [],
-      items: []
+      items: [],
+      chosenSourse: ''
     }
     this.requestFeed = this.requestFeed.bind(this);
     this.submitSource = this.submitSource.bind(this);
     this.processData = this.processData.bind(this);
+    this.modifySources = this.modifySources.bind(this);
+    this.onSourceChange = this.onSourceChange.bind(this);
   }
 
   componentDidMount(event) {
@@ -49,16 +52,16 @@ class App extends React.Component {
       })
       .finally(() => {
         this.processData()
+        this.modifySources()
       })
   }
 
   processData() {
     let elements = [];
     let sources = [];
-    for (let i = 0; i < this.state.data.length; i++) {
-      sources.push(this.state.data[i].sourceID);
-      
-      elements.push(...this.state.data[i].items);
+    for (let i of this.state.data) {
+      sources.push(i.sourceID);
+      elements.push(...i.items);
     }
     this.setState({
       sources: sources,
@@ -66,12 +69,48 @@ class App extends React.Component {
     });
   }
 
+  modifySources() {
+    const temp = [];
+    for (let i of this.state.sources) {
+      temp.push({
+        name: i.slice(8, i.indexOf('com')+3),
+        isChosen: false
+      })
+    }
+    temp.unshift({ name: "All", isChosen: true });
+    this.setState({ sources: temp });
+  }
+
+  onSourceChange(index) {
+    const idx = parseInt(index);
+    for (let i = 0; i < this.state.sources.length; i++) {
+      if (i === idx) {
+        this.state.sources[i].isChosen = true;
+      } else {
+        this.state.sources[i].isChosen = false;
+      }
+    }
+    if (idx === 0) {
+      const items = [];
+      for (let i of this.state.data) {
+        items.push(...i.items)
+      }
+      this.setState({ items: items })
+    } else {
+      for (let i of this.state.data) {
+        if ((i.sourceID).includes(this.state.sources[idx].name)) {
+          this.setState({ items: i.items })
+        }
+      }
+    }
+  }
+
   render() {
     return (
       <div className="main">
         <div className="leftColumn">
           <h2 className="userName">Happy Reader</h2>
-          <Sources sources={this.state.sources} />
+          <Sources sources={this.state.sources} onSourceChange={this.onSourceChange}/>
           <AddSource onSubmit={this.submitSource} />
         </div>
         <div className="rightColumn">

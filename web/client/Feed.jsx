@@ -15,7 +15,7 @@ export default class Feed extends React.Component {
               {(item.title).replace(/<\/?[^>]+(>|$)/g, "")}
             </span>
             <span className="pubDate">
-              {item.pubDate.slice(0, 17) + " | " + item.sourceName.toUpperCase()}
+              {item.pubDate.slice(0, 17) + " ・ " + item.sourceName.toUpperCase()}
             </span>
             <div style={{ clear: "both" }}></div>
           </div>
