@@ -6,8 +6,9 @@ import (
 	"encoding/xml"
 	"io/ioutil"
 	"log"
+	"math"
+	"net/url"
 	"os"
-	"strings"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -62,7 +63,7 @@ func dbConnection() *sql.DB {
 	return db
 }
 
-func insertSource(db *sql.DB, username string, source string) {
+func insertSource(db *sql.DB, username string, source string) int {
 	rows, err := db.Query("SELECT id FROM users WHERE email=?", username)
 	if err != nil {
 		log.Fatal(err)
@@ -80,10 +81,15 @@ func insertSource(db *sql.DB, username string, source string) {
 	}
 	defer insertStatment.Close()
 
-	_, err = insertStatment.Exec(userID, source)
+	insertResult, err := insertStatment.Exec(userID, source)
 	if err != nil {
 		log.Fatal(err)
 	}
+	id, err := insertResult.LastInsertId()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return int(id)
 }
 
 func getAllSources(db *sql.DB) []*Source {
@@ -129,7 +135,12 @@ func insertItems(db *sql.DB, sourceID int, items []Item) {
 
 	for _, item := range items {
 		pubdate, _ := time.Parse(time.RFC1123Z, item.PubDate)
-		_, err = insertStatment.Exec(sourceID, item.Title, item.Link, item.Description, pubdate)
+		var description = item.Description
+		if len(description) > 0 {
+			var min = int(math.Min(float64(len(description)), 399))
+			description = description[:min]
+		}
+		_, err = insertStatment.Exec(sourceID, item.Title, item.Link, description, pubdate)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -170,12 +181,13 @@ func getUserSources(db *sql.DB, userID int) []ResponseToClient {
 		items := make([]Item, 0)
 		for info.Next() {
 			var item Item
-			var temp = source.Link
-			var firstIdx = strings.Index(temp, ".")
-			var lastIdx = strings.Index(temp, ".com")
-			item.SourceName = temp[firstIdx+1 : lastIdx]
+			u, err := url.Parse(source.Link)
+			if err != nil {
+				log.Println(err)
+			}
+			item.SourceName = u.Host
 			var pubDate time.Time
-			err := info.Scan(&item.Title, &item.Link, &item.Description, &pubDate)
+			err = info.Scan(&item.Title, &item.Link, &item.Description, &pubDate)
 			if err != nil {
 				log.Println(err)
 			}

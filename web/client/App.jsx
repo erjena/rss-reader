@@ -38,6 +38,9 @@ class App extends React.Component {
       .catch((err) => {
         console.log(err)
       })
+      .finally(() => {
+        this.requestFeed()
+      })
   }
 
   requestFeed() {

@@ -9,11 +9,15 @@ import (
 	"time"
 )
 
+func crawlSingleSource(source *Source, db *sql.DB) {
+	var items = getXML(source.Link, source.LastPubDate)
+	insertItems(db, source.ID, items)
+}
+
 func crawl(db *sql.DB) {
 	var sources = getAllSources(db)
 	for _, source := range sources {
-		var items = getXML(source.Link, source.LastPubDate)
-		insertItems(db, source.ID, items)
+		crawlSingleSource(source, db)
 	}
 }
 
