@@ -9,6 +9,7 @@ import (
 	"math"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -185,7 +186,10 @@ func getUserSources(db *sql.DB, userID int) []ResponseToClient {
 			if err != nil {
 				log.Println(err)
 			}
-			item.SourceName = u.Host
+			var hostname = u.Hostname()
+			var first = strings.Index(hostname, ".")
+			var second = strings.LastIndex(hostname, ".")
+			item.SourceName = hostname[first:second]
 			var pubDate time.Time
 			err = info.Scan(&item.Title, &item.Link, &item.Description, &pubDate)
 			if err != nil {

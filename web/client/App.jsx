@@ -66,6 +66,8 @@ class App extends React.Component {
       sources.push(i.sourceID);
       elements.push(...i.items);
     }
+    console.log(elements)
+    elements.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
     this.setState({
       sources: sources,
       items: elements
@@ -77,7 +79,7 @@ class App extends React.Component {
     for (let i of this.state.sources) {
       let url = new URL(i);
       temp.push({
-        name: url.host,
+        name: url.hostname,
         isChosen: false
       })
     }
