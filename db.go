@@ -167,7 +167,7 @@ func getUserSources(db *sql.DB, userID int) []ResponseToClient {
 		}
 		defer info.Close()
 
-		var items []Item
+		items := make([]Item, 0)
 		for info.Next() {
 			var item Item
 			var temp = source.Link
