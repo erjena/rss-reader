@@ -75,8 +75,9 @@ class App extends React.Component {
   modifySources() {
     const temp = [];
     for (let i of this.state.sources) {
+      let url = new URL(i);
       temp.push({
-        name: i.slice(8, i.indexOf('com')+3),
+        name: url.host,
         isChosen: false
       })
     }
