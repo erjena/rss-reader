@@ -12,23 +12,34 @@ import (
 func crawlWrapper(db *sql.DB) {
 	for true {
 		crawl(db)
-		time.Sleep(1 * time.Minute)
+		time.Sleep(10 * time.Second)
 	}
 }
 
-func crawlSingleSource(source *Source, db *sql.DB) {
+func crawlSingleSource(source *Source, db *sql.DB, ch chan bool) {
 	var items = getXML(source.Link, source.LastPubDate)
 	insertItems(db, source.ID, items)
+	ch <- true
+	close(ch)
 }
 
 func crawl(db *sql.DB) {
 	startTime := time.Now()
 	log.Println("Start crawl")
 	var sources = getAllSources(db)
+
+	channels := make([]chan bool, 0)
 	for _, source := range sources {
 		log.Printf("Fetch data for source %v:\n", source.Link)
-		crawlSingleSource(source, db)
+		ch := make(chan bool)
+		go crawlSingleSource(source, db, ch)
+		channels = append(channels, ch)
 	}
+
+	for _, ch := range channels {
+		<-ch
+	}
+
 	endTime := time.Now()
 	log.Printf("End crawl. Elapsed %v:\n", endTime.Sub(startTime))
 }
