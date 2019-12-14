@@ -9,16 +9,28 @@ import (
 	"time"
 )
 
+func crawlWrapper(db *sql.DB) {
+	for true {
+		crawl(db)
+		time.Sleep(1 * time.Minute)
+	}
+}
+
 func crawlSingleSource(source *Source, db *sql.DB) {
 	var items = getXML(source.Link, source.LastPubDate)
 	insertItems(db, source.ID, items)
 }
 
 func crawl(db *sql.DB) {
+	startTime := time.Now()
+	log.Println("Start crawl")
 	var sources = getAllSources(db)
 	for _, source := range sources {
+		log.Printf("Fetch data for source %v:\n", source.Link)
 		crawlSingleSource(source, db)
 	}
+	endTime := time.Now()
+	log.Printf("End crawl. Elapsed %v:\n", endTime.Sub(startTime))
 }
 
 func getXML(link string, lastPubDate *time.Time) []Item {

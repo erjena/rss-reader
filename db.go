@@ -138,7 +138,7 @@ func insertItems(db *sql.DB, sourceID int, items []Item) {
 		pubdate, _ := time.Parse(time.RFC1123Z, item.PubDate)
 		var description = item.Description
 		if len(description) > 0 {
-			var min = int(math.Min(float64(len(description)), 399))
+			var min = int(math.Min(float64(len(description)), 398))
 			description = description[:min]
 		}
 		_, err = insertStatment.Exec(sourceID, item.Title, item.Link, description, pubdate)

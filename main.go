@@ -4,6 +4,6 @@ var fileName string
 
 func main() {
 	var db = dbConnection()
-	crawl(db)
+	go crawlWrapper(db)
 	setupServer(db)
 }
