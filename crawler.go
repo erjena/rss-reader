@@ -6,21 +6,23 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"sync"
 	"time"
 )
 
 func crawlWrapper(db *sql.DB) {
 	for true {
 		crawl(db)
-		time.Sleep(10 * time.Second)
+		time.Sleep(1 * time.Minute)
 	}
 }
 
-func crawlSingleSource(source *Source, db *sql.DB, ch chan bool) {
+func crawlSingleSource(source *Source, db *sql.DB, waitGroup *sync.WaitGroup) {
 	var items = getXML(source.Link, source.LastPubDate)
 	insertItems(db, source.ID, items)
-	ch <- true
-	close(ch)
+	if waitGroup != nil {
+		waitGroup.Done()
+	}
 }
 
 func crawl(db *sql.DB) {
@@ -28,18 +30,14 @@ func crawl(db *sql.DB) {
 	log.Println("Start crawl")
 	var sources = getAllSources(db)
 
-	channels := make([]chan bool, 0)
+	var waitGroup sync.WaitGroup
 	for _, source := range sources {
 		log.Printf("Fetch data for source %v:\n", source.Link)
-		ch := make(chan bool)
-		go crawlSingleSource(source, db, ch)
-		channels = append(channels, ch)
+		waitGroup.Add(1)
+		go crawlSingleSource(source, db, &waitGroup)
 	}
 
-	for _, ch := range channels {
-		<-ch
-	}
-
+	waitGroup.Wait()
 	endTime := time.Now()
 	log.Printf("End crawl. Elapsed %v:\n", endTime.Sub(startTime))
 }

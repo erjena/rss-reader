@@ -91,7 +91,5 @@ func addSources(db *sql.DB, res http.ResponseWriter, req *http.Request) {
 
 	id := insertSource(db, *info.User, *info.Link)
 	source := Source{id, *info.Link, nil}
-	ch := make(chan bool)
-	go crawlSingleSource(&source, db, ch)
-	<-ch
+	crawlSingleSource(&source, db, nil)
 }
