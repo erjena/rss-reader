@@ -1,128 +1,54 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-import Feed from './Feed.jsx';
-import Sources from './Sources.jsx';
-import AddSource from './AddSource.jsx';
+import LoginPage from './LoginPage.jsx';
+import UserPage from './UserPage.jsx';
 import '../public/main.css';
 
 class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      data: [],
-      sources: [],
-      items: [],
-      chosenSourse: ''
+      loginPage: false,
+      data: []
     }
     this.requestFeed = this.requestFeed.bind(this);
-    this.submitSource = this.submitSource.bind(this);
-    this.processData = this.processData.bind(this);
-    this.modifySources = this.modifySources.bind(this);
-    this.onSourceChange = this.onSourceChange.bind(this);
+    this.handleLoginSuccess = this.handleLoginSuccess.bind(this);
   }
 
   componentDidMount(event) {
     this.requestFeed();
   }
 
-  submitSource(source) {
-    console.log("source", source)
-    axios.post('/sources', {
-      user: "abc@gmail.com",
-      link: source
-    })
-      .then((response) => {
-        console.log(response)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-      .finally(() => {
-        this.requestFeed()
-      })
-  }
-
   requestFeed() {
-    axios.get('/list', {
+    axios.get('/api/list', {
       params: { user: "abc@gmail.com" }
     })
       .then((response) => {
-        this.setState({ data: response.data })
+        this.setState({ data: response.data, loginPage: false })
       })
       .catch((error) => {
-        console.log(error)
-      })
-      .finally(() => {
-        this.processData()
-        this.modifySources()
-      })
-  }
-
-  processData() {
-    let elements = [];
-    let sources = [];
-    for (let i of this.state.data) {
-      sources.push(i.sourceID);
-      elements.push(...i.items);
-    }
-    console.log(elements)
-    elements.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-    this.setState({
-      sources: sources,
-      items: elements
-    });
-  }
-
-  modifySources() {
-    const temp = [];
-    for (let i of this.state.sources) {
-      let url = new URL(i);
-      temp.push({
-        name: url.hostname,
-        isChosen: false
-      })
-    }
-    temp.unshift({ name: "All", isChosen: true });
-    this.setState({ sources: temp });
-  }
-
-  onSourceChange(index) {
-    const idx = parseInt(index);
-    for (let i = 0; i < this.state.sources.length; i++) {
-      if (i === idx) {
-        this.state.sources[i].isChosen = true;
-      } else {
-        this.state.sources[i].isChosen = false;
-      }
-    }
-    if (idx === 0) {
-      const items = [];
-      for (let i of this.state.data) {
-        items.push(...i.items)
-      }
-      this.setState({ items: items })
-    } else {
-      for (let i of this.state.data) {
-        if ((i.sourceID).includes(this.state.sources[idx].name)) {
-          this.setState({ items: i.items })
+        if (error.response.status === 401) {
+          this.setState({ loginPage: true })
+        } else {
+          console.log(error)
         }
-      }
-    }
+      })
+  }
+
+  handleLoginSuccess() {
+    this.setState({ loginPage: false });
   }
 
   render() {
+    let renderPage;
+    if (this.state.loginPage) {
+      renderPage = <LoginPage onLoginSuccess={this.handleLoginSuccess} />
+    } else {
+      renderPage = <UserPage onRequestFeed={this.requestFeed} data={this.state.data} />
+    }
     return (
-      <div className="main">
-        <div className="leftColumn">
-          <h2 className="userName">Happy Reader</h2>
-          <Sources sources={this.state.sources} onSourceChange={this.onSourceChange}/>
-          <AddSource onSubmit={this.submitSource} />
-        </div>
-        <div className="rightColumn">
-          <Feed data={this.state.items} />
-        </div>
-      </div>
+      renderPage
     )
   }
 }

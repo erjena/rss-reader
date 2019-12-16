@@ -1,20 +1,33 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
 
+const userIdContextKey = "userID"
+
 func setupServer(db *sql.DB) {
 	r := mux.NewRouter()
-	r.Methods("GET").Path("/list").HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+	r.Use(func(next http.Handler) http.Handler {
+		return sessionTokenMiddleware(db, next)
+	})
+	r.Methods("GET").Path("/api/list").HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		getHandler(db, res, req)
 	})
-	r.Methods("POST").Path("/sources").HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+	r.Methods("POST").Path("/api/login").HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		handleLogin(db, res, req)
+	})
+	r.Methods("POST").Path("/api/register").HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		handleRegister(db, res, req)
+	})
+	r.Methods("POST").Path("/api/sources").HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		addSources(db, res, req)
 	})
 
@@ -26,47 +39,143 @@ func setupServer(db *sql.DB) {
 	}
 }
 
+func handleLogin(db *sql.DB, res http.ResponseWriter, req *http.Request) {
+	type RequestBody struct {
+		Username *string `json:"username"`
+		Password *string `json:"password"`
+	}
+	var requestBody *RequestBody
+	err := json.NewDecoder(req.Body).Decode(&requestBody)
+	if err != nil {
+		log.Println(err)
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if requestBody.Username == nil {
+		log.Println("Missing username")
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if requestBody.Password == nil {
+		log.Println("Missing password")
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	// check username and password
+	id, salt, hash, err := getUserInfo(db, *requestBody.Username)
+	if err != nil {
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	newHash := createHash(*requestBody.Password + salt)
+	if newHash != hash {
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	userToken := getOrCreateToken(db, id)
+	addCookie(res, "Session-Token", userToken)
+}
+
+func handleRegister(db *sql.DB, res http.ResponseWriter, req *http.Request) {
+	type RequestBody struct {
+		Username *string `json:"username"`
+		Password *string `json:"password"`
+	}
+	var requestBody *RequestBody
+	err := json.NewDecoder(req.Body).Decode(&requestBody)
+	if err != nil {
+		log.Println(err)
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if requestBody.Username == nil {
+		log.Println("Missing username")
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if requestBody.Password == nil {
+		log.Println("Missing password")
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if len(*requestBody.Username) == 0 {
+		log.Println("Missing username")
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if len(*requestBody.Password) == 0 {
+		log.Println("Missing password")
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	salt := randStringBytes(40)
+	passSalt := *requestBody.Password + salt
+	hash := createHash(passSalt)
+	id := insertUserInfo(db, *requestBody.Username, salt, hash)
+	log.Printf("new user id %v", id)
+}
+
 func getHandler(db *sql.DB, res http.ResponseWriter, req *http.Request) {
-	// fmt.Printf("request body %v", req.Body)
-	// body, err := ioutil.ReadAll(req.Body)
-	// if err != nil {
-	// 	log.Println(err)
-	// 	res.WriteHeader(http.StatusBadRequest)
-	// 	return
-	// }
-	// log.Println(string(body))
-
-	// type UserName struct {
-	// 	User *string `json:"user"`
-	// }
-	// var userName UserName
-	// err := json.NewDecoder(req.Body).Decode(&userName)
-	// if err != nil {
-	// 	log.Print(err)
-	// 	res.WriteHeader(http.StatusBadRequest)
-	// 	return
-	// }
-	// err = json.Unmarshal(body, &userName)
-	// if err != nil {
-	// 	log.Println(err)
-	// 	return
-	// }
-	// fmt.Printf("user name %v", userName.User)
-
-	var responseData = getUserSources(db, 1)
+	userID := req.Context().Value(userIdContextKey)
+	if userID == nil {
+		log.Print("User `id wad not found")
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	var responseData = getUserSources(db, userID.(int))
 	data, err := json.Marshal(responseData)
 	if err != nil {
 		log.Fatalf("Was not able to stringify %v", err)
 		res.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
 	res.WriteHeader(http.StatusOK)
 	res.Write(data)
 }
 
+func addCookie(res http.ResponseWriter, name string, value string) {
+	cookie := http.Cookie{
+		Name:  name,
+		Value: value,
+	}
+	http.SetCookie(res, &cookie)
+}
+
+func sessionTokenMiddleware(db *sql.DB, next http.Handler) http.Handler {
+	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		if !strings.HasPrefix(req.RequestURI, "/api/") {
+			next.ServeHTTP(res, req)
+			return
+		}
+		if strings.HasPrefix(req.RequestURI, "/api/login") {
+			next.ServeHTTP(res, req)
+			return
+		}
+		if strings.HasPrefix(req.RequestURI, "/api/register") {
+			next.ServeHTTP(res, req)
+			return
+		}
+		token, err := req.Cookie("Session-Token")
+		if err != nil {
+			log.Println(err)
+			res.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		userID, err := getSession(db, token.Value)
+		if err != nil {
+			log.Print(err)
+			res.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		ctx := context.WithValue(req.Context(), userIdContextKey, userID)
+		next.ServeHTTP(res, req.WithContext(ctx))
+	})
+}
+
 func addSources(db *sql.DB, res http.ResponseWriter, req *http.Request) {
 	type SourceInfo struct {
-		User *string `json:"user"`
 		Link *string `json:"link"`
 	}
 	var info *SourceInfo
@@ -77,19 +186,19 @@ func addSources(db *sql.DB, res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if info.User == nil {
-		log.Printf("Missing user name")
-		res.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
 	if info.Link == nil {
 		log.Printf("Missing link")
 		res.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	userID := req.Context().Value(userIdContextKey)
+	if userID == nil {
+		log.Print("User `id wad not found")
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
-	id := insertSource(db, *info.User, *info.Link)
+	id := insertSource(db, userID.(int), *info.Link)
 	source := Source{id, *info.Link, nil}
 	crawlSingleSource(&source, db, nil)
 }

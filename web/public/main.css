@@ -110,3 +110,22 @@ a {
   color: #286FB4;
 }
 
+.loginPage {
+  padding-top: 20%;
+  margin: auto;
+  width: 50%;
+}
+
+.loginForm {
+  display: inline-block;
+  width: 50%;
+}
+
+.registerForm {
+  display: inline-block;
+  width: 50%;
+}
+
+input {
+  margin-bottom: 10px;
+}

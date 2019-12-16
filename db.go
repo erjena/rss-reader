@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"io/ioutil"
 	"log"
 	"math"
@@ -64,18 +65,42 @@ func dbConnection() *sql.DB {
 	return db
 }
 
-func insertSource(db *sql.DB, username string, source string) int {
-	rows, err := db.Query("SELECT id FROM users WHERE email=?", username)
+func insertUserInfo(db *sql.DB, email string, salt string, hash string) int {
+	insertStatment, err := db.Prepare("INSERT INTO users (email, password_salt, password_hash, create_time, update_time) VALUES (?, ?, ?, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())")
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer insertStatment.Close()
+	insertResult, err := insertStatment.Exec(email, salt, hash)
+	if err != nil {
+		log.Fatal(err)
+	}
+	id, err := insertResult.LastInsertId()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return int(id)
+}
+
+func getUserInfo(db *sql.DB, username string) (int, string, string, error) {
+	rows, err := db.Query("SELECT id, password_salt, password_hash FROM users WHERE email=?", username)
+	if err != nil {
+		log.Print(err)
+		return 0, "", "", err
+	}
 	defer rows.Close()
 	if rows.Next() != true {
-		log.Fatal("User name was not found")
+		log.Printf("User was not found: %v", username)
+		return 0, "", "", errors.New("User was not found")
 	}
-	var userID int
-	rows.Scan(&userID)
+	var id int
+	var salt string
+	var hash string
+	rows.Scan(&id, &salt, &hash)
+	return id, salt, hash, nil
+}
 
+func insertSource(db *sql.DB, userID int, source string) int {
 	insertStatment, err := db.Prepare("INSERT INTO sources (user_id, link, create_time) VALUES (?, ?, CURRENT_TIMESTAMP())")
 	if err != nil {
 		log.Fatal(err)
@@ -203,4 +228,51 @@ func getUserSources(db *sql.DB, userID int) []ResponseToClient {
 	}
 
 	return response
+}
+
+func getSession(db *sql.DB, token string) (int, error) {
+	info, err := db.Query("SELECT user_id FROM sessions WHERE token=?", token)
+	if err != nil {
+		log.Println(err)
+		return 0, err
+	}
+	defer info.Close()
+	if info.Next() == false {
+		return 0, errors.New("User ID was not found")
+	}
+	var userID int
+	err = info.Scan(&userID)
+	if err != nil {
+		log.Println(err)
+		return 0, err
+	}
+	return userID, nil
+}
+
+func getOrCreateToken(db *sql.DB, userID int) string {
+	info, err := db.Query("SELECT token FROM sessions WHERE user_id=?", userID)
+	if err != nil {
+		log.Println(err)
+	}
+	defer info.Close()
+
+	if info.Next() == true {
+		var userToken string
+		err := info.Scan(&userToken)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return userToken
+	}
+	newToken := randStringBytes(100)
+	insertStatment, err := db.Prepare("INSERT INTO sessions (user_id, token, created_at) VALUES (?, ?, CURRENT_TIMESTAMP())")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer insertStatment.Close()
+	_, err = insertStatment.Exec(userID, newToken)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return newToken
 }
