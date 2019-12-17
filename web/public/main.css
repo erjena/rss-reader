@@ -120,7 +120,7 @@ a {
   margin-top: 30%;
   float: left;
   width: 45%;
-  height: 270px;
+  height: 300px;
   margin-right: 0.5px;
   border: 1.5px solid #286FB4;
   border-radius: 5px;
@@ -139,7 +139,7 @@ label {
 }
 
 input {
-  margin-top: 3px;
+  margin-top: 4px;
   border-radius: 5px;
   border: 0.5px solid #B0DDE4;
   font-size: 16px;
@@ -151,8 +151,8 @@ input {
   color: #DF4C73;
   border: 1px solid #286FB4;
   border-radius: 5px;
-  font-size: 12px;
   position: relative;
+  font-size: 12px;
   bottom: -25px;
   left: 45%;
 }

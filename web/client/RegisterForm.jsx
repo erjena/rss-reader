@@ -43,7 +43,7 @@ export default class RegisterForm extends React.Component {
       errors["email"] = "Please enter email";
     }
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (re.test(String(this.state.email.toLowerCase()))) {
+    if (!re.test(String(this.state.email.toLowerCase()))) {
       formIsValid = false;
       errors["email"] = "Invalid email";
     }
@@ -53,7 +53,7 @@ export default class RegisterForm extends React.Component {
     }
     if (this.state.password !== this.state.verifyPassword) {
       formIsValid = false;
-      errors["verifyPassword"] = "Verify password";
+      errors["verifyPassword"] = "Passwords do not match";
     }
     this.setState({ errors: errors });
     return formIsValid;
@@ -61,7 +61,7 @@ export default class RegisterForm extends React.Component {
 
   handleClick(event) {
     event.preventDefault();
-    if (this.handleValidation) {
+    if (this.handleValidation()) {
       axios.post('/api/register', {
         username: this.state.email,
         password: this.state.password
@@ -82,20 +82,20 @@ export default class RegisterForm extends React.Component {
       <div className="forms">
         <form>
           <h4>Register</h4>
-          <label>User Name
+          <label>Email
               <input type="text" onChange={this.handleEmailChange} value={this.state.email} />
           </label>
           <br />
           <span style={{ color: "red" }}>{this.state.errors["email"]}</span>
           <br />
           <label>Password
-              <input type="text" onChange={this.handlePasswordChange} value={this.state.password} />
+              <input type="password" onChange={this.handlePasswordChange} value={this.state.password} />
           </label>
           <br />
           <span style={{ color: "red" }}>{this.state.errors["password"]}</span>
           <br />
-          <label>Verify password
-              <input type="text" onChange={this.handleVerifyPasswordChange} value={this.state.verifyPassword} />
+          <label>Re-enter password
+              <input type="password" onChange={this.handleVerifyPasswordChange} value={this.state.verifyPassword} />
           </label>
           <br />
           <span style={{ color: "red" }}>{this.state.errors["verifyPassword"]}</span>

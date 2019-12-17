@@ -71,14 +71,14 @@ export default class LoginForm extends React.Component {
       <div className="forms">
         <form>
           <h4>Login</h4>
-          <label>User Name
+          <label>Email
               <input type="text" onChange={this.handleEmailChange} value={this.state.email} />
           </label>
           <br />
           <span style={{ color: "red" }}>{this.state.errors["email"]}</span>
           <br />
           <label>Password
-              <input type="text" onChange={this.handlePasswordChange} value={this.state.password} />
+              <input type="password" onChange={this.handlePasswordChange} value={this.state.password} />
           </label>
           <br />
           <span style={{ color: "red" }}>{this.state.errors["password"]}</span>
