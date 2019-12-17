@@ -13,6 +13,15 @@ CREATE TABLE users (
   CONSTRAINT unique_email UNIQUE (email)
 );
 
+CREATE TABLE sessions (
+  id            INT AUTO_INCREMENT,
+  user_id       INT NOT NULL,
+  token         VARCHAR(300) NOT NULL,
+  created_at    TIME NOT NULL,
+  PRIMARY KEY(id),
+  FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
 CREATE TABLE sources (
   id                INT AUTO_INCREMENT,
   user_id           INT NOT NULL,
@@ -31,13 +40,4 @@ CREATE TABLE items (
   pubDate         DATETIME NOT NULL,
   PRIMARY KEY(id),
   FOREIGN KEY(source_id) REFERENCES sources(id)
-);
-
-CREATE TABLE sessions (
-  id            INT AUTO_INCREMENT,
-  user_id       INT NOT NULL,
-  token         VARCHAR(300) NOT NULL,
-  created_at    TIME NOT NULL,
-  PRIMARY KEY(id),
-  FOREIGN KEY(user_id) REFERENCES users(id)
 );

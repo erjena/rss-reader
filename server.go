@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const userIdContextKey = "userID"
+const userIDContextKey = "userID"
 
 func setupServer(db *sql.DB) {
 	r := mux.NewRouter()
@@ -117,7 +117,7 @@ func handleRegister(db *sql.DB, res http.ResponseWriter, req *http.Request) {
 }
 
 func getHandler(db *sql.DB, res http.ResponseWriter, req *http.Request) {
-	userID := req.Context().Value(userIdContextKey)
+	userID := req.Context().Value(userIDContextKey)
 	if userID == nil {
 		log.Print("User `id wad not found")
 		res.WriteHeader(http.StatusBadRequest)
@@ -169,7 +169,7 @@ func sessionTokenMiddleware(db *sql.DB, next http.Handler) http.Handler {
 			res.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-		ctx := context.WithValue(req.Context(), userIdContextKey, userID)
+		ctx := context.WithValue(req.Context(), userIDContextKey, userID)
 		next.ServeHTTP(res, req.WithContext(ctx))
 	})
 }
@@ -191,7 +191,7 @@ func addSources(db *sql.DB, res http.ResponseWriter, req *http.Request) {
 		res.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	userID := req.Context().Value(userIdContextKey)
+	userID := req.Context().Value(userIDContextKey)
 	if userID == nil {
 		log.Print("User `id wad not found")
 		res.WriteHeader(http.StatusBadRequest)

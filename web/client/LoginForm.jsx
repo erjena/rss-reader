@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import '../public/main.css';
 
 export default class LoginForm extends React.Component {
   constructor(props) {
@@ -58,7 +59,7 @@ export default class LoginForm extends React.Component {
           this.props.onLoginSuccess();
         })
         .catch((error) => {
-          this.setState({errors: {"password": "Unable to login."}})
+          this.setState({ errors: { "password": "Unable to login." } })
         })
     } else {
       alert("Please fill the form.")
@@ -67,24 +68,23 @@ export default class LoginForm extends React.Component {
 
   render() {
     return (
-      <div className="loginForm">
+      <div className="forms">
         <form>
-          <fieldset>
-            <label>User Name:
+          <h4>Login</h4>
+          <label>User Name
               <input type="text" onChange={this.handleEmailChange} value={this.state.email} />
-            </label>
-            <br />
-            <span style={{ color: "red" }}>{this.state.errors["email"]}</span>
-            <br />
-            <label>Password:
+          </label>
+          <br />
+          <span style={{ color: "red" }}>{this.state.errors["email"]}</span>
+          <br />
+          <label>Password
               <input type="text" onChange={this.handlePasswordChange} value={this.state.password} />
-            </label>
-            <br />
-            <span style={{ color: "red" }}>{this.state.errors["password"]}</span>
-            <br />
-            <button onClick={this.handleClick}>Login</button>
-          </fieldset>
+          </label>
+          <br />
+          <span style={{ color: "red" }}>{this.state.errors["password"]}</span>
+          <br />
         </form>
+        <button className="loginButton" onClick={this.handleClick}>Login</button>
       </div>
     )
   }

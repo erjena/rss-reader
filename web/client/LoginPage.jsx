@@ -1,6 +1,7 @@
 import React from 'react';
 import LoginForm from './LoginForm.jsx';
 import RegisterForm from './RegisterForm.jsx';
+import '../public/main.css';
 
 export default class LoginPage extends React.Component {
   constructor(props) {

@@ -111,21 +111,48 @@ a {
 }
 
 .loginPage {
-  padding-top: 20%;
+  margin-top: 200px;
   margin: auto;
-  width: 50%;
+  width: 60%;
 }
 
-.loginForm {
-  display: inline-block;
-  width: 50%;
+.forms {
+  margin-top: 30%;
+  float: left;
+  width: 45%;
+  height: 270px;
+  margin-right: 0.5px;
+  border: 1.5px solid #286FB4;
+  border-radius: 5px;
+  padding: 10px;
+  vertical-align: top;
 }
 
-.registerForm {
-  display: inline-block;
-  width: 50%;
+h4 {
+  text-align: center;
+  color: #DF4C73;
+}
+
+label {
+  font-size: 16px;
+  color: #286FB4;
 }
 
 input {
-  margin-bottom: 10px;
+  margin-top: 3px;
+  border-radius: 5px;
+  border: 0.5px solid #B0DDE4;
+  font-size: 16px;
+  width: 100%;
+  color: #286FB4;
+}
+
+.loginButton {
+  color: #DF4C73;
+  border: 1px solid #286FB4;
+  border-radius: 5px;
+  font-size: 12px;
+  position: relative;
+  bottom: -25px;
+  left: 45%;
 }

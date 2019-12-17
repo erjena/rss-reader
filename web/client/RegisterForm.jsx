@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import '../public/main.css';
 
 export default class RegisterForm extends React.Component {
   constructor(props) {
@@ -7,11 +8,13 @@ export default class RegisterForm extends React.Component {
     this.state = {
       email: '',
       password: '',
+      verifyPassword: '',
       fields: {},
       errors: {}
     }
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.handleVerifyPasswordChange = this.handleVerifyPasswordChange.bind(this);
     this.handleValidation = this.handleValidation.bind(this);
     this.handleClick = this.handleClick.bind(this);
   }
@@ -26,8 +29,13 @@ export default class RegisterForm extends React.Component {
     this.setState({ password: e.target.value });
   }
 
+  handleVerifyPasswordChange(e) {
+    e.preventDefault();
+    this.setState({ verifyPassword: e.target.value });
+  }
+
   handleValidation() {
-    let errors = this.state.errors;
+    let errors = {};
     let formIsValid = true;
 
     if (!this.state.email) {
@@ -42,6 +50,10 @@ export default class RegisterForm extends React.Component {
     if (!this.state.password) {
       formIsValid = false;
       errors["password"] = "Please enter password";
+    }
+    if (this.state.password !== this.state.verifyPassword) {
+      formIsValid = false;
+      errors["verifyPassword"] = "Verify password";
     }
     this.setState({ errors: errors });
     return formIsValid;
@@ -67,24 +79,28 @@ export default class RegisterForm extends React.Component {
 
   render() {
     return (
-      <div className="registerForm">
+      <div className="forms">
         <form>
-          <fieldset>
-            <label>User Name:
+          <h4>Register</h4>
+          <label>User Name
               <input type="text" onChange={this.handleEmailChange} value={this.state.email} />
-            </label>
-            <br />
-            <span style={{ color: "red" }}>{this.state.errors["email"]}</span>
-            <br />
-            <label>Password:
+          </label>
+          <br />
+          <span style={{ color: "red" }}>{this.state.errors["email"]}</span>
+          <br />
+          <label>Password
               <input type="text" onChange={this.handlePasswordChange} value={this.state.password} />
-            </label>
-            <br />
-            <span style={{ color: "red" }}>{this.state.errors["password"]}</span>
-            <br />
-            <button onClick={this.handleClick}>Login</button>
-          </fieldset>
+          </label>
+          <br />
+          <span style={{ color: "red" }}>{this.state.errors["password"]}</span>
+          <br />
+          <label>Verify password
+              <input type="text" onChange={this.handleVerifyPasswordChange} value={this.state.verifyPassword} />
+          </label>
+          <br />
+          <span style={{ color: "red" }}>{this.state.errors["verifyPassword"]}</span>
         </form>
+        <button className="loginButton" onClick={this.handleClick}>Register</button>
       </div>
     )
   }
