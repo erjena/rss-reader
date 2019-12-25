@@ -9,52 +9,38 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      loginPage: false,
-      data: []
+      isLoggedIn: false
     }
-    this.requestFeed = this.requestFeed.bind(this);
     this.handleLoginSuccess = this.handleLoginSuccess.bind(this);
     this.handleLogoutSuccess = this.handleLogoutSuccess.bind(this);
   }
 
-  componentDidMount(event) {
-    this.requestFeed();
-  }
-
-  requestFeed() {
-    axios.get('/api/list')
+  componentDidMount() {
+    axios.get('/api/checkLoggedIn')
       .then((response) => {
-        console.log(response.data)
-        this.setState({ data: response.data, loginPage: false })
+        this.setState({ isLoggedIn: true });
       })
       .catch((error) => {
-        if (error.response.status === 401) {
-          this.setState({ loginPage: true })
-        } else {
-          console.log(error)
-        }
+        console.log(error);
+        this.setState({ isLoggedIn: false });
       })
   }
 
   handleLoginSuccess() {
-    this.setState({ loginPage: false });
+    this.setState({ isLoggedIn: true });
   }
 
 
   handleLogoutSuccess() {
-    this.setState({ loginPage: true });
+    this.setState({ isLoggedIn: false });
   }
 
   render() {
-    let renderPage;
-    if (this.state.loginPage) {
-      renderPage = <LoginPage onLoginSuccess={this.handleLoginSuccess} />
+    if (this.state.isLoggedIn) {
+      return <UserPage onLogout={this.handleLogoutSuccess} />
     } else {
-      renderPage = <UserPage onRequestFeed={this.requestFeed} data={this.state.data} onLogout={this.handleLogoutSuccess} />
+      return <LoginPage onLoginSuccess={this.handleLoginSuccess} />
     }
-    return (
-      renderPage
-    )
   }
 }
 

@@ -9,12 +9,50 @@ import '../public/main.css';
 export default class UserPage extends React.Component {
   constructor(props) {
     super(props)
+    this.state = {
+      data: [],
+      sources: [],
+      items: []
+    }
 
+    this.requestFeed = this.requestFeed.bind(this);
     this.submitSource = this.submitSource.bind(this);
     this.onSourceChange = this.onSourceChange.bind(this);
-    this.generateInitialState = this.generateInitialState.bind(this);
     this.onLogoutSuccess = this.onLogoutSuccess.bind(this);
-    this.state = this.generateInitialState();
+  }
+
+  componentDidMount() {
+    this.requestFeed();
+  }
+
+  requestFeed() {
+    axios.get('/api/list')
+      .then((response) => {
+        let elements = [];
+        let sources = [];
+        for (let i of response.data) {
+          sources.push(i.sourceID);
+          elements.push(...i.items);
+        }
+        elements.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+        const sourceObjects = [];
+        for (let i of sources) {
+          let url = new URL(i);
+          sourceObjects.push({
+            name: url.hostname,
+            isChosen: false
+          })
+        }
+        sourceObjects.unshift({ name: "All", isChosen: true });
+        this.setState({
+          data: response.data,
+          sources: sourceObjects,
+          items: elements
+        })
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
 
   submitSource(source) {
@@ -22,36 +60,11 @@ export default class UserPage extends React.Component {
       link: source
     })
       .then((response) => {
-        this.props.onRequestFeed();
+        this.requestFeed();
       })
       .catch((err) => {
         console.log(err)
       })
-  }
-
-  generateInitialState() {
-    let elements = [];
-    let sources = [];
-    for (let i of this.props.data) {
-      sources.push(i.sourceID);
-      elements.push(...i.items);
-    }
-    elements.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-
-    const sourceObjects = [];
-    for (let i of sources) {
-      let url = new URL(i);
-      console.log("url", url)
-      sourceObjects.push({
-        name: url.hostname,
-        isChosen: false
-      })
-    }
-    sourceObjects.unshift({ name: "All", isChosen: true });
-    return {
-      sources: sourceObjects,
-      items: elements
-    };
   }
 
   onSourceChange(index) {
@@ -65,12 +78,12 @@ export default class UserPage extends React.Component {
     }
     if (idx === 0) {
       const items = [];
-      for (let i of this.props.data) {
+      for (let i of this.state.data) {
         items.push(...i.items)
       }
       this.setState({ items: items })
     } else {
-      for (let i of this.props.data) {
+      for (let i of this.state.data) {
         if ((i.sourceID).includes(this.state.sources[idx].name)) {
           this.setState({ items: i.items })
         }
@@ -87,8 +100,8 @@ export default class UserPage extends React.Component {
       <div className="main">
         <div className="leftColumn">
           <h2 className="userName">Happy Reader</h2>
-          <Sources sources={this.state.sources} onSourceChange={this.onSourceChange}/>
-          <br/>
+          <Sources sources={this.state.sources} onSourceChange={this.onSourceChange} />
+          <br />
           <Logout onLogout={this.onLogoutSuccess} />
           <AddSource onSubmit={this.submitSource} />
         </div>

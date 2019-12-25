@@ -19,6 +19,7 @@ func setupServer(db *sql.DB) {
 	r.Use(func(next http.Handler) http.Handler {
 		return sessionTokenMiddleware(db, next)
 	})
+	r.Methods("GET").Path("/api/checkLoggedIn").HandlerFunc(handleCheckLoggedIn)
 	r.Methods("GET").Path("/api/list").HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		getHandler(db, res, req)
 	})
@@ -41,6 +42,11 @@ func setupServer(db *sql.DB) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func handleCheckLoggedIn(res http.ResponseWriter, req *http.Request) {
+	res.WriteHeader(http.StatusOK)
+	return
 }
 
 func handleLogin(db *sql.DB, res http.ResponseWriter, req *http.Request) {
