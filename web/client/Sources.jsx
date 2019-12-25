@@ -13,6 +13,7 @@ export default class Sources extends React.Component {
   }
 
   render() {
+    console.log('inside sources component:', this.props.sources)
     const sources = this.props.sources.map((source, index) => 
       <div id={index} key={index} className="sourceItem"
       style={{ backgroundColor: source.isChosen ? "#B0DDE4" : "transparent"}}

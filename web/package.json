@@ -2,7 +2,7 @@
   "name": "rss-reader",
   "version": "1.0.0",
   "description": "",
-  "main": "App.js",
+  "main": "App.jsx",
   "scripts": {
     "react-dev": "webpack -d --watch"
   },

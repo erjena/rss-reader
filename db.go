@@ -276,3 +276,13 @@ func getOrCreateToken(db *sql.DB, userID int) string {
 	}
 	return newToken
 }
+
+func deleteUserSession(db *sql.DB, token string) error {
+	result, err := db.Query("DELETE FROM sessions WHERE token=?", token)
+	if err != nil {
+		log.Print(err)
+		return err
+	}
+	defer result.Close()
+	return nil
+}

@@ -3,6 +3,7 @@ import axios from 'axios';
 import Feed from './Feed.jsx';
 import Sources from './Sources.jsx';
 import AddSource from './AddSource.jsx';
+import Logout from './Logout.jsx';
 import '../public/main.css';
 
 export default class UserPage extends React.Component {
@@ -12,6 +13,7 @@ export default class UserPage extends React.Component {
     this.submitSource = this.submitSource.bind(this);
     this.onSourceChange = this.onSourceChange.bind(this);
     this.generateInitialState = this.generateInitialState.bind(this);
+    this.onLogoutSuccess = this.onLogoutSuccess.bind(this);
     this.state = this.generateInitialState();
   }
 
@@ -39,13 +41,13 @@ export default class UserPage extends React.Component {
     const sourceObjects = [];
     for (let i of sources) {
       let url = new URL(i);
+      console.log("url", url)
       sourceObjects.push({
         name: url.hostname,
         isChosen: false
       })
     }
     sourceObjects.unshift({ name: "All", isChosen: true });
-
     return {
       sources: sourceObjects,
       items: elements
@@ -76,12 +78,18 @@ export default class UserPage extends React.Component {
     }
   }
 
+  onLogoutSuccess() {
+    this.props.onLogout();
+  }
+
   render() {
     return (
       <div className="main">
         <div className="leftColumn">
           <h2 className="userName">Happy Reader</h2>
           <Sources sources={this.state.sources} onSourceChange={this.onSourceChange}/>
+          <br/>
+          <Logout onLogout={this.onLogoutSuccess} />
           <AddSource onSubmit={this.submitSource} />
         </div>
         <div className="rightColumn">

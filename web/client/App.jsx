@@ -14,6 +14,7 @@ class App extends React.Component {
     }
     this.requestFeed = this.requestFeed.bind(this);
     this.handleLoginSuccess = this.handleLoginSuccess.bind(this);
+    this.handleLogoutSuccess = this.handleLogoutSuccess.bind(this);
   }
 
   componentDidMount(event) {
@@ -21,10 +22,9 @@ class App extends React.Component {
   }
 
   requestFeed() {
-    axios.get('/api/list', {
-      params: { user: "abc@gmail.com" }
-    })
+    axios.get('/api/list')
       .then((response) => {
+        console.log(response.data)
         this.setState({ data: response.data, loginPage: false })
       })
       .catch((error) => {
@@ -40,12 +40,17 @@ class App extends React.Component {
     this.setState({ loginPage: false });
   }
 
+
+  handleLogoutSuccess() {
+    this.setState({ loginPage: true });
+  }
+
   render() {
     let renderPage;
     if (this.state.loginPage) {
       renderPage = <LoginPage onLoginSuccess={this.handleLoginSuccess} />
     } else {
-      renderPage = <UserPage onRequestFeed={this.requestFeed} data={this.state.data} />
+      renderPage = <UserPage onRequestFeed={this.requestFeed} data={this.state.data} onLogout={this.handleLogoutSuccess} />
     }
     return (
       renderPage

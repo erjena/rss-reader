@@ -12,6 +12,7 @@ import (
 )
 
 const userIDContextKey = "userID"
+const sessionCookie = "Session-Token"
 
 func setupServer(db *sql.DB) {
 	r := mux.NewRouter()
@@ -29,6 +30,9 @@ func setupServer(db *sql.DB) {
 	})
 	r.Methods("POST").Path("/api/sources").HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 		addSources(db, res, req)
+	})
+	r.Methods("POST").Path("/api/logout").HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		hadleDeleteUserSession(db, res, req)
 	})
 
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./web/public")))
@@ -74,7 +78,7 @@ func handleLogin(db *sql.DB, res http.ResponseWriter, req *http.Request) {
 	}
 
 	userToken := getOrCreateToken(db, id)
-	addCookie(res, "Session-Token", userToken)
+	setCookie(res, sessionCookie, userToken)
 }
 
 func handleRegister(db *sql.DB, res http.ResponseWriter, req *http.Request) {
@@ -135,7 +139,7 @@ func getHandler(db *sql.DB, res http.ResponseWriter, req *http.Request) {
 	res.Write(data)
 }
 
-func addCookie(res http.ResponseWriter, name string, value string) {
+func setCookie(res http.ResponseWriter, name string, value string) {
 	cookie := http.Cookie{
 		Name:  name,
 		Value: value,
@@ -157,7 +161,7 @@ func sessionTokenMiddleware(db *sql.DB, next http.Handler) http.Handler {
 			next.ServeHTTP(res, req)
 			return
 		}
-		token, err := req.Cookie("Session-Token")
+		token, err := req.Cookie(sessionCookie)
 		if err != nil {
 			log.Println(err)
 			res.WriteHeader(http.StatusUnauthorized)
@@ -201,4 +205,19 @@ func addSources(db *sql.DB, res http.ResponseWriter, req *http.Request) {
 	id := insertSource(db, userID.(int), *info.Link)
 	source := Source{id, *info.Link, nil}
 	crawlSingleSource(&source, db, nil)
+}
+
+func hadleDeleteUserSession(db *sql.DB, res http.ResponseWriter, req *http.Request) {
+	token, err := req.Cookie(sessionCookie)
+	if err != nil {
+		log.Print(err)
+	}
+	err = deleteUserSession(db, token.Value)
+	if err != nil {
+		log.Print(err)
+		res.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	setCookie(res, sessionCookie, "")
+	res.WriteHeader(http.StatusOK)
 }

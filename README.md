@@ -1,6 +1,7 @@
 # RSS Reader
 
 An RSS Reader built with React JS, Go, and MySQL.
+<img src="demo.png">
 
 ## Running
 
@@ -37,6 +38,4 @@ Simply click on a title and happy reading!
 
 ## Further Improvments
 
-1. Use goroutine to run crawler.
-2. Add support for multiple users.
-3. Allow users to choose between light and dark themes.
+1. Allow users to choose between light and dark themes.
