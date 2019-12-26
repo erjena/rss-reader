@@ -100,22 +100,25 @@ func getUserInfo(db *sql.DB, username string) (int, string, string, error) {
 	return id, salt, hash, nil
 }
 
-func insertSource(db *sql.DB, userID int, source string) int {
+func insertSource(db *sql.DB, userID int, source string) (int, error) {
 	insertStatment, err := db.Prepare("INSERT INTO sources (user_id, link, create_time) VALUES (?, ?, CURRENT_TIMESTAMP())")
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return 0, err
 	}
 	defer insertStatment.Close()
 
 	insertResult, err := insertStatment.Exec(userID, source)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return 0, err
 	}
 	id, err := insertResult.LastInsertId()
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return 0, err
 	}
-	return int(id)
+	return int(id), nil
 }
 
 func getAllSources(db *sql.DB) []*Source {

@@ -210,7 +210,11 @@ func addSources(db *sql.DB, res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	id := insertSource(db, userID.(int), *info.Link)
+	id, err := insertSource(db, userID.(int), *info.Link)
+	if err != nil {
+		res.WriteHeader(http.StatusConflict)
+		return
+	}
 	source := Source{id, *info.Link, nil}
 	crawlSingleSource(&source, db, nil)
 }

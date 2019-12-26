@@ -66,7 +66,11 @@ export default class UserPage extends React.Component {
         this.requestFeed();
       })
       .catch((err) => {
-        console.log(err)
+        if (err.response.status === 409) {
+          alert('This source already exists')
+        } else {
+          console.log(err)
+        }
       })
   }
 
