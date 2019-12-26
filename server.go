@@ -123,7 +123,9 @@ func handleRegister(db *sql.DB, res http.ResponseWriter, req *http.Request) {
 	passSalt := *requestBody.Password + salt
 	hash := createHash(passSalt)
 	id := insertUserInfo(db, *requestBody.Username, salt, hash)
-	log.Printf("new user id %v", id)
+
+	userToken := getOrCreateToken(db, id)
+	setCookie(res, sessionCookie, userToken)
 }
 
 func getHandler(db *sql.DB, res http.ResponseWriter, req *http.Request) {

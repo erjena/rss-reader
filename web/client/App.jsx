@@ -12,6 +12,7 @@ class App extends React.Component {
       isLoggedIn: false
     }
     this.handleLoginSuccess = this.handleLoginSuccess.bind(this);
+    this.handleRegisterSuccess = this.handleRegisterSuccess.bind(this);
     this.handleLogoutSuccess = this.handleLogoutSuccess.bind(this);
   }
 
@@ -30,6 +31,9 @@ class App extends React.Component {
     this.setState({ isLoggedIn: true });
   }
 
+  handleRegisterSuccess() {
+    this.setState({ isLoggedIn: true });
+  }
 
   handleLogoutSuccess() {
     this.setState({ isLoggedIn: false });
@@ -39,7 +43,7 @@ class App extends React.Component {
     if (this.state.isLoggedIn) {
       return <UserPage onLogout={this.handleLogoutSuccess} />
     } else {
-      return <LoginPage onLoginSuccess={this.handleLoginSuccess} />
+      return <LoginPage onLoginSuccess={this.handleLoginSuccess} onRegisterSuccess={this.handleRegisterSuccess} />
     }
   }
 }

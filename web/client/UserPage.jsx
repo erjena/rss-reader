@@ -28,6 +28,9 @@ export default class UserPage extends React.Component {
   requestFeed() {
     axios.get('/api/list')
       .then((response) => {
+        if (response.data === null) {
+          return;
+        }
         let elements = [];
         let sources = [];
         for (let i of response.data) {

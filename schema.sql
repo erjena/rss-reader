@@ -28,7 +28,8 @@ CREATE TABLE sources (
   link              VARCHAR(250) NOT NULL,
   create_time       TIME NOT NULL,
   PRIMARY KEY(id),
-  FOREIGN KEY(user_id) REFERENCES users(id)
+  FOREIGN KEY(user_id) REFERENCES users(id),
+  UNIQUE KEY unique_user_id_link (user_id, link)
 );
 
 CREATE TABLE items (

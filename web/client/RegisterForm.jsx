@@ -67,7 +67,7 @@ export default class RegisterForm extends React.Component {
         password: this.state.password
       })
         .then((response) => {
-          console.log(response)
+          this.props.onRegisterSuccess();
         })
         .catch((error) => {
           console.log(error)
