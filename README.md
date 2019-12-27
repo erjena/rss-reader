@@ -2,10 +2,10 @@
 
 An RSS Reader built with React JS, Go, and MySQL.
 <p style="text-align:center;">
-<img src="loginPage.png">
+<img src="loginPage.png" width="750px">
 </p>
 <p style="text-align:center;">
-<img src="mainPage.png">
+<img src="mainPage.png" width="750px">
 </p>
 
 ## Running
