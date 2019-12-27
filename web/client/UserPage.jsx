@@ -106,11 +106,11 @@ export default class UserPage extends React.Component {
     return (
       <div className="main">
         <div className="leftColumn">
-          <h2 className="userName">Happy Reader</h2>
+          <h2 className="greeting">Happy Reader</h2>
+          <AddSource onSubmit={this.submitSource} />
           <Sources sources={this.state.sources} onSourceChange={this.onSourceChange} />
           <br />
           <Logout onLogout={this.onLogoutSuccess} />
-          <AddSource onSubmit={this.submitSource} />
         </div>
         <div className="rightColumn">
           <Feed data={this.state.items} />

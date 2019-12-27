@@ -40,7 +40,7 @@ export default class AddSource extends React.Component {
     }
     return (
       <div className="addSource">
-        <button onClick={this.onClick} className="addButton"> + Add Source</button>
+        <button onClick={this.onClick} className="addButton">+ Add Source</button>
         {form}
       </div>
     )

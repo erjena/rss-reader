@@ -22,7 +22,7 @@ body {
   overflow-x: hidden;
 }
 
-.userName {
+.greeting {
   padding-top: 25px;
   margin: 0%;
   padding-left: 15px;
@@ -32,7 +32,6 @@ body {
 
 .sourceItem {
   width: 100%;
-  padding-left: 20px;
   padding-top: 7px;
   padding-bottom: 7px;
   font-size: 16px;
@@ -44,17 +43,17 @@ body {
 }
 
 .addSource {
-  position: absolute;
-  bottom: 150px;
-  padding-left: 10px;
+  margin: 10px 0px 40px;
+  text-align: center;
 }
 
 .addButton {
-  border: 1px solid  #286FB4;
-  border-radius: 5px;
-  background-color: #B0DDE4;
+  background-color: transparent;
+  border: 1px solid rgb(196, 224, 243);
+  border-radius: 7px;
+  padding: 3px 27px;
   font-size: 14px;
-  color: #DF4C73;
+  color: #286FB4;
 }
 
 .addButton:hover {
@@ -65,7 +64,27 @@ button:focus {
   outline: 0;
 }
 
+.signOut {
+  position: absolute;
+  bottom: 7%;
+  left: 6%;
+}
+
+.signOutButton {
+  background-color: transparent;
+  border: 1px solid rgb(196, 224, 243);
+  border-radius: 7px;
+  padding: 3px 27px;
+  font-size: 14px;
+  color: #286FB4;
+}
+
+.signOutButton:hover {
+  cursor: pointer;
+}
+
 .inputSource {
+  width: 90%;
   margin-top: 10px;
   border: 1px solid  #286FB4;
   border-radius: 5px;

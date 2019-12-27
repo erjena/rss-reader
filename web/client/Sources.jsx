@@ -15,7 +15,7 @@ export default class Sources extends React.Component {
   render() {
     const sources = this.props.sources.map((source, index) => 
       <div id={index} key={index} className="sourceItem"
-      style={{ backgroundColor: source.isChosen ? "#B0DDE4" : "transparent"}}
+      style={{ backgroundColor: source.isChosen ? "#B0DDE4" : "transparent", paddingLeft: index === 0 ? "20px" : "38px" }}
       onClick={this.onClick}>
         {source.name}
       </div>
